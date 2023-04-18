@@ -30,6 +30,7 @@ module.exports = {
     },
     async updateReview(_, { input }, { authUser }) {
       if (!authUser) throw new AuthenticationError("your session expired");
+      //user can only update their review check(from token we will get user id)
       if (input.userId != authUser.id)
         throw new AuthenticationError("you cannot update other person review");
 

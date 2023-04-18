@@ -22,8 +22,8 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   context: async ({ req }) => {
+    //using this for authentication
     const authUser = await authJwt.getUser(req);
-    // console.log(authUser);
     return {
       authUser,
     };

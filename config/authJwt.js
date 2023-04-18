@@ -7,7 +7,7 @@ exports.getUser = async (req) => {
 
   if (token) {
     try {
-      return await jwt.verify(token, process.env.secret);
+      return jwt.verify(token, process.env.secret);
     } catch (e) {
       throw new AuthenticationError("your session expired");
     }

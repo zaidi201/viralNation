@@ -1,6 +1,7 @@
 const db = require("../../models");
 const Op = db.Sequelize.Op;
 
+//create movie
 exports.addMovie = async (data) => {
   try {
     const movie = await db.movie.create(data);
@@ -10,6 +11,8 @@ exports.addMovie = async (data) => {
     return { message: e.message };
   }
 };
+
+//get all movies (with reviews and users) with pagination and sorting
 exports.getAllMovies = async (name, description, limit, pageNumber, sort) => {
   try {
     const movie = await db.movie.findAll({
@@ -35,6 +38,7 @@ exports.getAllMovies = async (name, description, limit, pageNumber, sort) => {
   }
 };
 
+//get movie by id
 exports.getMovieById = async (id) => {
   try {
     const movie = await db.movie.findOne({ where: { id } });
@@ -47,6 +51,7 @@ exports.getMovieById = async (id) => {
   }
 };
 
+//update movie by id
 exports.updateMovie = async (data) => {
   const { movieName, description, director, releaseDate } = data;
   try {
@@ -66,6 +71,8 @@ exports.updateMovie = async (data) => {
     return { message: e.message };
   }
 };
+
+//delete movie by id
 exports.deleteMovie = async (id) => {
   try {
     const movie = await db.movie.destroy({ where: { id: id } });

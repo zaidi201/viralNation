@@ -10,6 +10,7 @@ module.exports = {
       { name, description, limit, pageNumber, sort },
       { authUser }
     ) {
+      //auth user will come from context
       if (!authUser) throw new AuthenticationError("your session expired");
       return movieController.getAllMovies(
         name,

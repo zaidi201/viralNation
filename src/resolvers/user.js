@@ -1,7 +1,5 @@
 "use strict";
 
-const db = require("../../models");
-
 const userController = require("../controllers/userController");
 
 module.exports = {

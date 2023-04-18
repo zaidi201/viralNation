@@ -33,6 +33,7 @@ db.user = require("./user")(sequelize, Sequelize);
 db.movie = require("./movie")(sequelize, Sequelize);
 db.review = require("./review")(sequelize, Sequelize);
 
+//making associations
 db.review.belongsTo(db.user, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",

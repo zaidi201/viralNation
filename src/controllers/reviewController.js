@@ -1,6 +1,7 @@
 const db = require("../../models");
 const Op = db.Sequelize.Op;
 
+//add review provided with user and movie id in object(validations are done in graphql schema)
 exports.addReview = async (data) => {
   try {
     const review = await db.review.create(data);
@@ -10,6 +11,8 @@ exports.addReview = async (data) => {
     return { message: e.message };
   }
 };
+
+//get all reviews of movies and user
 exports.getAllreviews = async (userId, comment, limit, pageNumber, sort) => {
   try {
     const review = await db.review.findAll({
@@ -29,6 +32,7 @@ exports.getAllreviews = async (userId, comment, limit, pageNumber, sort) => {
       ],
     });
 
+    //logged in user reviews will always stay on top by following sorting algo
     const sortedReviews = review.sort((a, b) => {
       if (a.userId === userId && b.userId !== userId) {
         return -1;
@@ -38,7 +42,6 @@ exports.getAllreviews = async (userId, comment, limit, pageNumber, sort) => {
         return 0;
       }
     });
-    // console.log(JSON.stringify(userId, 0, 2));
 
     return sortedReviews;
   } catch (e) {
@@ -47,6 +50,7 @@ exports.getAllreviews = async (userId, comment, limit, pageNumber, sort) => {
   }
 };
 
+//update review by id
 exports.updatereview = async (data) => {
   const { comment, rating } = data;
   try {
@@ -66,6 +70,8 @@ exports.updatereview = async (data) => {
     return { message: e.message };
   }
 };
+
+//delete review by id
 exports.deleteReview = async (id) => {
   try {
     const review = await db.review.destroy({ where: { id: id } });

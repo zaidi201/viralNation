@@ -5,22 +5,27 @@ const emailSender = require("../helper/emailSend");
 const validation = require("../helper/validation");
 require("dotenv").config();
 
+//adding user
 exports.addUser = async (data) => {
   try {
+    //checking for email already exists
     const check = await db.user.findOne({ where: { email: data.email } });
     if (check) {
       return {
         message: "email already exists",
       };
     }
-
+    //validating email
     if ((await validation.validateEmail(data.email)) != true) {
       return { message: "invalid email" };
     }
+
+    //validating password(commented because of test purposes)
     // if ((await validation.validatePassword(data.password)) != true) {
     //   return { message: "invalid password" };
     // }
 
+    //password encryption
     bcrypt.genSalt(10, function (err, salt) {
       bcrypt.hash(data.password, salt, function (err, hash) {
         data.password = hash;
@@ -30,6 +35,7 @@ exports.addUser = async (data) => {
         db.user
           .create(data)
           .then((data1) => {
+            //commented because we have to use actual email credentials for account confromation email to users. you can see helper function
             // try {
             //   const html =
             //     '<a href="https://dummy.com/confirmationAccount?token=' +
@@ -63,18 +69,22 @@ exports.addUser = async (data) => {
     console.log("error", e);
   }
 };
+
+//user login
 exports.userLogin = async (data) => {
   const user = await db.user.findOne({
     where: {
       email: data.email,
     },
   });
+  // email verification check
   // if (user.emailVerified == false) return { message: "Email not verified" };
 
   if (!user) return { message: "User not found" };
   const isValid = await bcrypt.compare(data.password, user.password);
   if (!isValid) return { success: false, message: "Invalid Credentials" };
 
+  //token assigning
   const token = jwt.sign(
     {
       id: user.id,
@@ -92,12 +102,15 @@ exports.userLogin = async (data) => {
   };
 };
 
+//forgot password
 exports.forgotPassword = async (email) => {
   const user = await db.user.findOne({
     where: {
       email,
     },
   });
+
+  // sending new link with token to user email
   if (!user) return { message: "User not found" };
   const token = jwt.sign(
     {
@@ -120,6 +133,7 @@ exports.forgotPassword = async (email) => {
   //  return {message:"failed to send email"}
   // }
 
+  //updating token in user db so to check when user click on reset link(token is same and valid)
   await db.user.update(
     {
       verificationToken: token,
@@ -132,6 +146,7 @@ exports.forgotPassword = async (email) => {
   return { message: "reset link sent to email" };
 };
 
+//reset password after clicking on link send to user email
 exports.resetPassword = async (data) => {
   var hashed;
 
@@ -143,6 +158,7 @@ exports.resetPassword = async (data) => {
   if (!user) {
     return { message: "user not found" };
   }
+  //token check
   if (
     user.verificationToken != data.token ||
     !jwt.verify(data.token, process.env.secret)
@@ -156,6 +172,8 @@ exports.resetPassword = async (data) => {
       hashed = hash;
     });
   });
+
+  //setting verification token to null
   await db.user.update(
     {
       verificationToken: null,
