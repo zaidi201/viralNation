@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const emailSender = require("../helper/emailSend");
 const validation = require("../helper/validation");
 require("dotenv").config();
+const message = require("../../constants/messages.json");
 
 //adding user
 exports.addUser = async (data) => {
@@ -12,15 +13,16 @@ exports.addUser = async (data) => {
     const check = await db.user.findOne({ where: { email: data.email } });
     if (check) {
       return {
-        message: "email already exists",
+        message: message.alreadyExists,
       };
     }
     //validating email
     if ((await validation.validateEmail(data.email)) != true) {
-      return { message: "invalid email" };
+      return { message: message.emailInvalid };
     }
 
     //validating password(commented because of test purposes)
+
     // if ((await validation.validatePassword(data.password)) != true) {
     //   return { message: "invalid password" };
     // }
@@ -63,10 +65,12 @@ exports.addUser = async (data) => {
       });
     });
     return {
-      message: "user created",
+      message: message.created,
     };
   } catch (e) {
-    console.log("error", e);
+    return {
+      message: e.message,
+    };
   }
 };
 
@@ -80,9 +84,9 @@ exports.userLogin = async (data) => {
   // email verification check
   // if (user.emailVerified == false) return { message: "Email not verified" };
 
-  if (!user) return { message: "User not found" };
+  if (!user) return { message: message.notFound };
   const isValid = await bcrypt.compare(data.password, user.password);
-  if (!isValid) return { success: false, message: "Invalid Credentials" };
+  if (!isValid) return { success: false, message: message.invalidCredentials };
 
   //token assigning
   const token = jwt.sign(
@@ -111,7 +115,7 @@ exports.forgotPassword = async (email) => {
   });
 
   // sending new link with token to user email
-  if (!user) return { message: "User not found" };
+  if (!user) return { message: message.notFound };
   const token = jwt.sign(
     {
       id: user.id,
@@ -143,7 +147,7 @@ exports.forgotPassword = async (email) => {
     }
   );
 
-  return { message: "reset link sent to email" };
+  return { message: message.resetLink };
 };
 
 //reset password after clicking on link send to user email
@@ -156,14 +160,14 @@ exports.resetPassword = async (data) => {
     },
   });
   if (!user) {
-    return { message: "user not found" };
+    return { message: message.notFound };
   }
   //token check
   if (
     user.verificationToken != data.token ||
     !jwt.verify(data.token, process.env.secret)
   ) {
-    return { message: "invalid token" };
+    return { message: message.tokenInvalid };
   }
 
   //Encrypt Password
@@ -183,5 +187,5 @@ exports.resetPassword = async (data) => {
       where: { id: data.userId },
     }
   );
-  return { message: "password reset successfull" };
+  return { message: message.passwordReset };
 };

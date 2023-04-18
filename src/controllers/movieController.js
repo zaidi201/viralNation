@@ -1,5 +1,6 @@
 const db = require("../../models");
 const Op = db.Sequelize.Op;
+const message = require("../../constants/messages.json");
 
 //create movie
 exports.addMovie = async (data) => {
@@ -43,7 +44,7 @@ exports.getMovieById = async (id) => {
   try {
     const movie = await db.movie.findOne({ where: { id } });
     if (!movie) {
-      return { message: "movie not found" };
+      return { message: message.notFound };
     }
     return movie;
   } catch (e) {
@@ -63,9 +64,9 @@ exports.updateMovie = async (data) => {
     );
 
     if (movie == 1) {
-      return { message: "update successful" };
+      return { message: message.updated };
     } else {
-      return { message: "update failed" };
+      return { message: message.failed };
     }
   } catch (e) {
     return { message: e.message };
@@ -77,9 +78,9 @@ exports.deleteMovie = async (id) => {
   try {
     const movie = await db.movie.destroy({ where: { id: id } });
     if (movie == 1) {
-      return { message: "delete successful" };
+      return { message: message.deleted };
     } else {
-      return { message: "delete failed" };
+      return { message: message.failed };
     }
   } catch (e) {
     return { message: e.message };

@@ -2,6 +2,7 @@
 
 const movieController = require("../controllers/movieController");
 const { AuthenticationError } = require("apollo-server-express");
+const message = require("../../constants/messages.json");
 
 module.exports = {
   Query: {
@@ -11,7 +12,7 @@ module.exports = {
       { authUser }
     ) {
       //auth user will come from context
-      if (!authUser) throw new AuthenticationError("your session expired");
+      if (!authUser) throw new AuthenticationError(message.sessionExpired);
       return movieController.getAllMovies(
         name,
         description,
@@ -21,25 +22,25 @@ module.exports = {
       );
     },
     async getMovieById(_, { id }, { authUser }) {
-      if (!authUser) throw new AuthenticationError("your session expired");
+      if (!authUser) throw new AuthenticationError(message.sessionExpired);
       return movieController.getMovieById(id);
     },
   },
   Mutation: {
     async addMovie(_, { input }, { authUser }) {
-      if (!authUser) throw new AuthenticationError("your session expired");
+      if (!authUser) throw new AuthenticationError(message.sessionExpired);
 
       return movieController.addMovie({ ...input });
     },
 
     async deleteMovie(_, { id }, { authUser }) {
-      if (!authUser) throw new AuthenticationError("your session expired");
+      if (!authUser) throw new AuthenticationError(message.sessionExpired);
 
       return movieController.deleteMovie(id);
     },
 
     async updateMovie(_, { input }, { authUser }) {
-      if (!authUser) throw new AuthenticationError("your session expired");
+      if (!authUser) throw new AuthenticationError(message.sessionExpired);
 
       return movieController.updateMovie({ ...input });
     },

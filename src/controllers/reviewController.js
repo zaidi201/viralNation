@@ -1,5 +1,6 @@
 const db = require("../../models");
 const Op = db.Sequelize.Op;
+const message = require("../../constants/messages.json");
 
 //add review provided with user and movie id in object(validations are done in graphql schema)
 exports.addReview = async (data) => {
@@ -62,9 +63,9 @@ exports.updatereview = async (data) => {
     );
 
     if (review == 1) {
-      return { message: "update successful" };
+      return { message: message.updated };
     } else {
-      return { message: "update failed" };
+      return { message: message.failed };
     }
   } catch (e) {
     return { message: e.message };
@@ -76,9 +77,9 @@ exports.deleteReview = async (id) => {
   try {
     const review = await db.review.destroy({ where: { id: id } });
     if (review == 1) {
-      return { message: "delete successful" };
+      return { message: message.deleted };
     } else {
-      return { message: "delete failed" };
+      return { message: message.failed };
     }
   } catch (error) {
     return { message: e.message };

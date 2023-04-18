@@ -1,0 +1,14 @@
+{
+    "created":"successfully created",
+    "updated":"updated successfully",
+    "deleted":"deleted successfully",
+    "passwordReset":"password reset successfull",
+    "tokenInvalid":"invalid token",
+    "notFound":"not found",
+    "resetLink": "reset link sent to registered email",
+    "invalidCredentials": "Invalid Credentials",
+    "alreadyExists":"email already exists",
+    "emailInvalid":"invalid email",
+    "sessionExpired":"your session expired",
+    "failed":"action failed"
+}

@@ -10,9 +10,9 @@ require("dotenv").config();
 
 const port = process.env.PORT || 4000;
 
-// db.sequelize.sync({ force: true }).then(async () => {
-//   console.log("Drop and re-sync db.");
-// });
+db.sequelize.sync({ force: true }).then(async () => {
+  console.log("Drop and re-sync db.");
+});
 
 const app = express();
 app.use(cors());
